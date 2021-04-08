@@ -1,8 +1,16 @@
 package com.kang.FloApiServer;
 
+import java.util.Arrays;
+
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableScheduling;
+
+import com.kang.FloApiServer.domain.song.CategoryType;
+import com.kang.FloApiServer.domain.song.Song;
+import com.kang.FloApiServer.domain.song.SongRepository;
 
 @EnableScheduling 
 @SpringBootApplication

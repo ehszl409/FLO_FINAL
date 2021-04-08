@@ -36,7 +36,7 @@ import lombok.NoArgsConstructor;
 			)
 		}
 	)
-public class PlaySong {
+public class PlaySong { //내 재생목록
 	
 	@Id //Pk
 	@GeneratedValue(strategy = GenerationType.IDENTITY) //Table, auto_increment, Sequence 
