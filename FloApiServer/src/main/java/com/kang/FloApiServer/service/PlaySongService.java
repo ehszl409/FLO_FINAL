@@ -31,8 +31,8 @@ public class PlaySongService {
 		PlaySong playSongEntity = playSongRepository.mCheckContain(playSong.getUser().getId(), playSong.getSong().getId());
 		
 		if(playSongEntity == null) {  //중복방지..
-			playSongRepository.save(playSong);
-			return playSong;
+			return playSongRepository.save(playSong);
+			
 		}
 				
 		return playSongEntity;

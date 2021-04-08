@@ -24,6 +24,7 @@ import com.bumptech.glide.request.target.Target;
 import com.kang.floapp.R;
 import com.kang.floapp.model.Song;
 import com.kang.floapp.utils.CustomListViewDialog;
+import com.kang.floapp.utils.eventbus.SongIdPassenger;
 import com.kang.floapp.utils.eventbus.SongPassenger;
 import com.kang.floapp.utils.notification.CreateNotification;
 import com.kang.floapp.view.common.Constants;
@@ -126,7 +127,6 @@ public class AllSongAdapter extends RecyclerView.Adapter<AllSongAdapter.MyViewHo
 
 
             ivSongPlay.setOnClickListener(v -> {
-
                 EventBus.getDefault().post(new SongPassenger(songList.get(getAdapterPosition()))); //재생목록에 추가할 곡 전달
 
             });

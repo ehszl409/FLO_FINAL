@@ -225,6 +225,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
            playListAdapter.setMySongList(playSongs);
         });
 
+        User user = userValidaionCheck();
+
+        if(user == null){
+            Toast.makeText(mContext, "세션이 만료되었습니다. 다시 로그인해주십시오.", Toast.LENGTH_SHORT).show();
+        }else{
+            mainViewModel.findPlaylist(user.getId());
+        }
+
         mainViewModel.categoryListSubscribe().observe(this, new Observer<List<Song>>() {
             @Override
             public void onChanged(List<Song> songs) {
@@ -318,7 +326,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public void setSongText() {
 
-        tvTitle.setText(playListAdapter.playList.get(Constants.prevNext).getSong().getTitle());
+        Constants.nowSong = playListAdapter.playList.get(Constants.prevNext).getSong();
+
+        tvTitle.setText(playListAdapter.playList.get(Constants.prevNext).getSong().getTitle()); //아주 안좋은 방법이긴 한데, 귀찮아서 수정안함.
         tvArtist.setText(playListAdapter.playList.get(Constants.prevNext).getSong().getArtist());
         tvPlayViewArtist.setText(playListAdapter.playList.get(Constants.prevNext).getSong().getArtist());
         tvPlayViewTitle.setText(playListAdapter.playList.get(Constants.prevNext).getSong().getTitle());
@@ -353,7 +363,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                               @Override
                               public boolean onResourceReady(Bitmap bitmap, Object o, Target<Bitmap> target, DataSource dataSource, boolean b) {
                                   Log.d(TAG, "비트맵변환한거0 => " + bitmap);
-                                  CreateNotification.createNotificaion((MainActivity)mContext, playListAdapter.playList.get(Constants.prevNext).getSong(), bitmap);
+                                  Constants.songBitmap = bitmap;
+                                  CreateNotification.createNotificaion((MainActivity)mContext,Constants.nowSong, bitmap, R.drawable.ic_glyph_solid_pause);
                                   return false;
                               }
                           }
@@ -534,9 +545,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public void songPause() {
 
-        CreateNotification.drw_play = R.drawable.ic_play;
-        //CreateNotification.notificationManagerCompat.notify(1,CreateNotification.notification);
-        //notificationManager.notify();
+        if( playListAdapter != null) {
+            CreateNotification.createNotificaion((MainActivity) mContext, Constants.nowSong, Constants.songBitmap, R.drawable.ic_glyph_solid_play);
+        }
+
         mp.pause();
         Constants.isPlaying = -1;
         ivBarPlay.setImageResource(android.R.drawable.ic_media_play);
@@ -567,12 +579,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
     public void songPlay() {
+
+        if( playListAdapter != null) {
+            CreateNotification.createNotificaion((MainActivity) mContext, Constants.nowSong, Constants.songBitmap, R.drawable.ic_glyph_solid_pause);
+        }
+
         mainSeekbar.setMax(mp.getDuration());
         playViewSeekBar.setMax(mp.getDuration());
 
-        CreateNotification.drw_play = R.drawable.ic_glyph_solid_pause;
-        //notificationManager.notify();
-        //CreateNotification.notificationManagerCompat.notify(1,CreateNotification.notification);
 
         Log.d(TAG, "songPlay: why???");
         Constants.isPlaying = 1;
@@ -668,6 +682,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void playlistAdd(SongPassenger songPassenger) {
         //Log.d(TAG, "playlistAdd: 내 재생목록에 song 추가" + songPassenger.song);
 
+        //Constants.prevNext = songPassenger.song.getId();
+
+        Constants.nowSong = songPassenger.song;
+
+
         Song song = songPassenger.song;
 
         String imageUrl = getImageUrl(song.getImg());
@@ -694,7 +713,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                               @Override
                               public boolean onResourceReady(Bitmap bitmap, Object o, Target<Bitmap> target, DataSource dataSource, boolean b) {
                                   Log.d(TAG, "비트맵변환한거0 => " + bitmap);
-                                  CreateNotification.createNotificaion((MainActivity)mContext, song, bitmap);
+                                  Constants.songBitmap = bitmap;
+                                  CreateNotification.createNotificaion((MainActivity)mContext, song, bitmap, R.drawable.ic_glyph_solid_pause);
+
                                   return false;
                               }
                           }
@@ -719,34 +740,38 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if(user != null){
             Log.d(TAG, "playlistAdd: "+user);
 
-            mainViewModel.addAndCallbackPlaysong(new PlaySongSaveReqDto(user,songPassenger.song), (MainActivity)mContext, new AddCallback<PlaySong>(){ //인터페이스 콜백패턴.
-                @Override
-                public void onSucess(PlaySong playSong) {
-                    int result = playListAdapter.addSong(playSong);
-                    if (result == 1) {
-                        Toast.makeText(mContext, "재생목록에 곡을 추가하였습니다.", Toast.LENGTH_SHORT).show();
-                    }else if(result == -1){
-                        String songUrl = getSongUrl(playSong.getSong().getFile());
-                        Log.d(TAG, "onSucess: songUrl: " + songUrl);
+            mainViewModel.addAndCallbackPlaysong(new PlaySongSaveReqDto(user, songPassenger.song), (MainActivity)mContext);
 
-                        if (playListAdapter.playList != null) {
-                            for (PlaySong play : playListAdapter.playList) {
-                                if (playSong.getSong().getId() == play.getSong().getId()) {
-                                    EventBus.getDefault().post(new SongIdPassenger(play.getId()-1));
-                                    Log.d(TAG, "addSong: 같다면" + play.getId());
-                                }
-                            }
-                        }
 
-                        EventBus.getDefault().post(new UrlPassenger(songUrl, Constants.isPlaying));
-                    }
-                }
 
-                @Override
-                public void onFailure() {
-                    Log.d(TAG, "onFailure: 실패...");
-                }
-            });
+//            mainViewModel.addAndCallbackPlaysong(new PlaySongSaveReqDto(user,songPassenger.song), (MainActivity)mContext, new AddCallback<PlaySong>(){ //인터페이스 콜백패턴.
+//                @Override
+//                public void onSucess(PlaySong playSong) {
+//                    int result = playListAdapter.addSong(playSong);
+//                    if (result == 1) {
+//                        Toast.makeText(mContext, "재생목록에 곡을 추가하였습니다.", Toast.LENGTH_SHORT).show();
+//                    }else if(result == -1){
+//                        String songUrl = getSongUrl(playSong.getSong().getFile());
+//                        Log.d(TAG, "onSucess: songUrl: " + songUrl);
+//
+//                        if (playListAdapter.playList != null) {
+//                            for (PlaySong play : playListAdapter.playList) {
+//                                if (playSong.getSong().getId() == play.getSong().getId()) {
+//                                    EventBus.getDefault().post(new SongIdPassenger(play.getId()-1));
+//                                    Log.d(TAG, "addSong: 같다면" + play.getId());
+//                                }
+//                            }
+//                        }
+//
+//                        EventBus.getDefault().post(new UrlPassenger(songUrl, Constants.isPlaying));
+//                    }
+//                }
+//
+//                @Override
+//                public void onFailure() {
+//                    Log.d(TAG, "onFailure: 실패...");
+//                }
+//            });
 
 
         }else{

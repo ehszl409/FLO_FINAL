@@ -61,4 +61,30 @@ public class Song {
 	@JsonIgnoreProperties({"song"})
 	@OrderBy("id desc")
 	private List<Reply> replys;
+	
+	
+	public Song (int id, String title, String artist, CategoryType category, String lyrics, String relaseDate, String img, String file ) {
+		this.id =id;  //Junit 테스트 용도 생성자
+		this.title =title;
+		this.artist =artist;
+		this.category = category;
+		this.lyrics =lyrics;
+		this.relaseDate = relaseDate;
+		this.img = img;
+		this.file = file;
+	}
+
+
+	public Song(String title, String artist, CategoryType category, String lyrics,
+			String relaseDate, String img, String file) {
+		this.title =title;
+		this.artist =artist;
+		this.category = category;
+		this.lyrics =lyrics;
+		this.relaseDate = relaseDate;
+		this.img = img;
+		this.file = file;
+		
+	}
+	
 }

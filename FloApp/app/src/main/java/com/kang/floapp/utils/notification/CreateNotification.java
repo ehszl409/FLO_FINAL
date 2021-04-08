@@ -30,13 +30,15 @@ public class CreateNotification {
     public static final String ACTION_PLAY = "actionplay";
     public static final String ACTION_NEXT = "actionnext";
     public static Notification notification;
-
+    public int drw_play;
 
 
     public static NotificationManagerCompat notificationManagerCompat;
-    public static int drw_play; //아 모르겠다. 포기
 
-    public static void createNotificaion(MainActivity mainActivity, Song song, Bitmap bitmap){
+
+
+
+    public static void createNotificaion(MainActivity mainActivity, Song song, Bitmap bitmap, int drw_play){
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
             //NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(mainActivity);
 
@@ -44,7 +46,6 @@ public class CreateNotification {
             Log.d(TAG, "createNotificaion: 만듬");
             
             MediaPlayer mp = mainActivity.mp;
-
 
 
 

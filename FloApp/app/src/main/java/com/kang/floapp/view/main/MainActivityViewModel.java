@@ -107,12 +107,12 @@ public class MainActivityViewModel extends ViewModel {
 
     //내 플레이리스트 관련
     public void findPlaylist(int userId){playSongRepository.fetchPlaylist(userId);}
-    public void addAndCallbackPlaysong(PlaySongSaveReqDto song, MainActivity mainActivity, AddCallback addCallback ){playSongRepository.playSongAdd(song, mainActivity, addCallback);}
+    public void addAndCallbackPlaysong(PlaySongSaveReqDto song, MainActivity mainActivity){playSongRepository.playSongAdd(song, mainActivity);}
     public void deleteByPlaylistId(int id){playSongRepository.deleteById(id);}
 
     //내 저장소 관련
     public void findStorage(){storageRepository.fetchAllStorage();}
-    public void addStorage(StorageSaveReqDto storageSaveReqDto){ storageRepository.saveStorage(storageSaveReqDto);}
+    public void addStorage(StorageSaveReqDto storageSaveReqDto, MainActivity mainActivity){ storageRepository.saveStorage(storageSaveReqDto, mainActivity);}
     public void deleteByStorageId(int id){ storageRepository.deleteById(id); }
 
 
