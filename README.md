@@ -483,7 +483,7 @@ Reply는 웹 서버와 연동을 위해서 관계가 있을 뿐, 앱에서는 �
 
 ### PPT 주소
 
-<https://docs.google.com/presentation/d/1AtcE94V3hqzZ15wt7rIhzOYzOanm0yTVcr5NhBxuhTc/edit>
+<https://docs.google.com/presentation/d/1JSFeEw2i_ziZRKjfQY7CMwPdn1z68YpQd7ZU_uz6vmA/edit#slide=id.p9>
 
 
 ### 웹 서버 - 앱 서버 연동 
